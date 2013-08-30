@@ -69,7 +69,7 @@ def read_config(env,fp):
     return repos, groups, inverse_groups
 
 
-def to_string(config):
+def to_string(repos, groups):
 
     def _sort(perms):
         tail = []
@@ -82,11 +82,18 @@ def to_string(config):
         return ''.join(perms)
 
     fp = StringIO()
-    for repo in sorted(config):
+    for group in groups:
+        fp.write("%s\t=" % group)
+        for member in groups[group]:
+            fp.write(" %s" % member)
+        fp.write("\n")
+    fp.write("\n")
+
+    for repo in sorted(repos):
         fp.write("repo\t%s\n" % repo)
 
         ## Combine permissions
-        perms = config[repo]
+        perms = repos[repo]
         transposed = {}
         for perm in perms:
             for user in perms[perm]:
