@@ -23,7 +23,7 @@ class GitoliteRepositoryManager(Component):
         node = utils.get_repo_node(self.env, self.gitolite_admin_reponame,
                                    "conf/gitolite.conf")
         fp = node.get_content()
-        return utils.read_config(fp)
+        return utils.read_config(self.env,fp)
     
     ## IPermissionRequestor methods
 
@@ -43,7 +43,7 @@ class GitoliteRepositoryManager(Component):
 
         if req.method == 'POST':
             repo_name = req.args['name']
-            perms = self.read_config()
+            perms, groups, inverse_groups = self.read_config()
             if repo_name in perms:
                 add_warning(req, _('A repository named %s already exists; maybe you just need to tell Trac about it using the Repositories panel?'))
                 req.redirect(req.href.admin(category, page))
@@ -57,7 +57,8 @@ class GitoliteRepositoryManager(Component):
             add_notice(req, _('Repository "%s" has been created.  Now you should give some users permissions on it using the Version Control Permissions panel.' % repo_name))
             req.redirect(req.href.admin(category, page))
 
-        data = {'repos': sorted(self.read_config())}
+        perms, groups, inverse_groups = self.read_config()
+        data = {'repos': sorted(perms)}
         return 'admin_repository_gitolite.html', data
 
     # ITemplateProvider methods

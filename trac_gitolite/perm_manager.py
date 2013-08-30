@@ -38,7 +38,7 @@ class GitolitePermissionManager(Component):
         node = utils.get_repo_node(self.env, self.gitolite_admin_reponame,
                                    "conf/gitolite.conf")
         fp = node.get_content()
-        return utils.read_config(fp)
+        return utils.read_config(self.env,fp)
     
     ## IAdminPanelProvider methods
 
@@ -80,7 +80,7 @@ class GitolitePermissionManager(Component):
             add_notice(req, _('The permissions have been updated.'))
             req.redirect(req.href.admin(category, page))
 
-        perms = self.read_config()
+        perms, groups, inverse_groups = self.read_config()
 
         users_listed_in_perms = set()
         flattened_perms = set()
