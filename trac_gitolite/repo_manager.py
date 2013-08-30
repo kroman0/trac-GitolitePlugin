@@ -35,7 +35,7 @@ class GitoliteRepositoryManager(Component):
 
     def get_admin_panels(self, req):
         if 'REPOSITORY_CREATE' in req.perm:
-            yield ('versioncontrol', _('Version Control'), 'gitolite', 
+            yield ('versioncontrol', _('Version Control'), 'gitolite_repositories', 
                    _('Gitolite Repositories'))
 
     def render_admin_panel(self, req, category, page, path_info):

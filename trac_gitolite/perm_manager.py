@@ -44,8 +44,8 @@ class GitolitePermissionManager(Component):
 
     def get_admin_panels(self, req):
         if 'VERSIONCONTROL_ADMIN' in req.perm:
-            yield ('versioncontrol', _('Version Control'), 'permissions', 
-                   _('Permissions'))
+            yield ('versioncontrol', _('Version Control'), 'gitolite_permissions', 
+                   _('Gitolite Permissions'))
 
     def render_admin_panel(self, req, category, page, path_info):
         req.perm.require('VERSIONCONTROL_ADMIN')
