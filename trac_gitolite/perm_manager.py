@@ -51,6 +51,7 @@ class GitolitePermissionManager(Component):
         req.perm.require('VERSIONCONTROL_ADMIN')
 
         if req.method == 'POST':
+            perms, groups, inverse_groups = self.read_config()
             perms = {}
             for setting in req.args:
                 try:
@@ -74,7 +75,7 @@ class GitolitePermissionManager(Component):
                 req.redirect(req.href.admin(category, page))
 
             utils.save_file(self.gitolite_admin_ssh_path, 'conf/gitolite.conf', 
-                            utils.to_string(perms),
+                            utils.to_string(perms, groups),
                             _('Updating repository permissions'))
 
             add_notice(req, _('The permissions have been updated.'))
