@@ -16,32 +16,57 @@ def get_repo_node(env, repo_name, node):
         raise TracError("Error reading Git files at %s; check your repository path (for repo %s) and file permissions" % (node, repo_name))
 
 
-def read_config(fp):
-    repos = dict()
+def read_config(env,fp):
+    repos = {}
     this_repo = None
+    groups = {}
+    inverse_groups = {}
     info = {}
     for line in fp:
         line = line.strip()
-        if line.startswith("repo"):
+        if line.startswith("@"): ## we assume that groups definitions preceed repo definitions!
+            env.log.debug("%%% group section")
+            group, users = line.split('=')
+            group = group.strip()
+            users = [i.strip() for i in users.split()]
+            if group in groups:
+                env.log.debug("add: member(s) %r to %r", users, group)
+                groups[group].extend(users)
+            else:
+                env.log.debug("new: member(s) %r to %r", users, group)
+                groups[group] = list(users)
+            for user in users:
+                if user in inverse_groups:
+                    env.log.debug("add: group %r to %r", group, user)
+                    inverse_groups[user].extend([group])
+                else:
+                    env.log.debug("new: group %r to %r", group, user)
+                    inverse_groups[user] = list([group])
+        elif line.startswith("repo"):
+            env.log.debug("%%% repo section")
             if this_repo is not None and len(info) > 0:
                 repos[this_repo] = info
             this_repo = line[len("repo"):].strip()
             info = {}
         elif '=' in line:
+            env.log.debug("%%% user section")
             perms, users = line.split("=")
+            env.log.debug("perms: %r, targets: %r", perms, users)
             perms = perms.strip().upper()
             users = [i.strip() for i in users.split()]
             for perm in perms:
                 if perm in info:
+                    env.log.debug("add: granting %r to %r", perm, users)
                     info[perm].extend(users)
                 else:
+                    env.log.debug("new: granting %r to %r", perm, users)
                     info[perm] = list(users) ## Copy it!
 
     if this_repo is not None and len(info) > 0:
         repos[this_repo] = info
 
     fp.close()
-    return repos
+    return repos, groups, inverse_groups
 
 
 def to_string(config):
