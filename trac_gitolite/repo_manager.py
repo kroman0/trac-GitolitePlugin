@@ -52,7 +52,7 @@ class GitoliteRepositoryManager(Component):
             for perm in ['R', 'W', '+']:
                 repo_perms[perm] = [trac_user]
             utils.save_file(self.gitolite_admin_ssh_path, 'conf/gitolite.conf',
-                            utils.to_string(perms),
+                            utils.to_string(perms, groups),
                             _('Adding new repository %s' % repo_name))
             add_notice(req, _('Repository "%s" has been created.  Now you should give some users permissions on it using the Version Control Permissions panel.' % repo_name))
             req.redirect(req.href.admin(category, page))
