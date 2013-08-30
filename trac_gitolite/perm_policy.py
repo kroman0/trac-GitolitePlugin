@@ -34,10 +34,10 @@ class GitolitePermissionPolicy(Component):
         node = utils.get_repo_node(self.env, self.gitolite_admin_reponame,
                                    "conf/gitolite.conf")
         fp = node.get_content()
-        return utils.read_config(fp)
+        return utils.read_config(self.env, fp)
 
     def check_repository_permission(self, action, username, repository, resource, perm):
-        repos = self.read_config()
+        repos, groups, inverse_groups = self.read_config()
 
         ## If the repo is not known in the config, we defer to the supersystem's decisions,
         ## unless our configuration says otherwise.
@@ -62,6 +62,13 @@ class GitolitePermissionPolicy(Component):
 
         if '@all' in perms.get('R', []):
             return True
+
+        if username in inverse_groups:
+            self.log.debug("checking groups for %r",username)
+            for group in inverse_groups[username]:
+                self.log.debug("checking group %r",group)
+                if group in perms.get('R', []):
+                    return True
 
         ## If the repo is known in the config but the user isn't explicitly granted access there,
         ## then the user does not have access.
