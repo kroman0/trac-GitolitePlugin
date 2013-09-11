@@ -84,12 +84,39 @@ class GitolitePermissionManager(Component):
         perms, groups, inverse_groups = self.read_config()
 
         users_listed_in_perms = set()
-        flattened_perms = set()
+        for perm in perms.values():
+            for userlist in perm.values():
+                users_listed_in_perms.update(userlist)
+        users = sorted(list(set(list(self.get_users()) + list(users_listed_in_perms))))
 
+        repos_perms = {}
+        for repo in perms:
+            users_listed_in_perms = set()
+            if repo not in repos_perms:
+                repos_perms[repo] = {}
+                for permission_class in ("W", "R", "0"):
+                    repos_perms[repo][permission_class] = {"g": [], "u": []}
+                repos_perms[repo]["perms"] = perms[repo]
+
+            for permission_class in ("W", "R"):
+                for user in perms[repo][permission_class]:
+                    if user not in users_listed_in_perms:
+                        if user.startswith("@"):
+                            repos_perms[repo][permission_class]["g"].append(user)
+                        else:
+                            repos_perms[repo][permission_class]["u"].append(user)
+                        users_listed_in_perms.add(user)
+            for user in users:
+                if user not in users_listed_in_perms:
+                    if user.startswith("@"):
+                        repos_perms[repo]["0"]["g"].append(user)
+                    else:
+                        repos_perms[repo]["0"]["u"].append(user)
+
+        flattened_perms = set()
         for p in perms.values():
             for perm in p:
                 flattened_perms.add(perm)
-                users_listed_in_perms.update(p[perm])
         flattened_perms = list(flattened_perms)
         def sort_perms(perms):
             tail = []
@@ -102,10 +129,8 @@ class GitolitePermissionManager(Component):
             return perms
         flattened_perms = sort_perms(flattened_perms)
 
-        users = sorted(list(set(list(self.get_users()) + list(users_listed_in_perms))))
-        data = {'repositories': perms, 'permissions': flattened_perms, 
-                'users': users,
-                'sort_perms': sort_perms}
+        data = {'permissions': flattened_perms, 
+                'repos_perms': repos_perms}
         return 'admin_repository_permissions.html', data
 
     # ITemplateProvider methods
