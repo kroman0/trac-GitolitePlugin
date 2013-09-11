@@ -130,7 +130,9 @@ class GitolitePermissionManager(Component):
         flattened_perms = sort_perms(flattened_perms)
 
         data = {'permissions': flattened_perms, 
-                'repos_perms': repos_perms}
+                'repos_perms': repos_perms,
+                'groups': groups,
+                'inverse_groups': inverse_groups}
         return 'admin_repository_permissions.html', data
 
     # ITemplateProvider methods

@@ -22,7 +22,7 @@
           <tr>
             <th colspan="2" width="32%">write access</th>
             <th colspan="2" width="32%">readonly access</th>
-            <th colspan="2" width="32%">not set</th>
+            <th colspan="2" width="32%">permissions not set</th>
           </tr>
         </thead>
         <tbody>
@@ -37,8 +37,8 @@
                   </thead>
                   <tbody>
                     <tr py:for="user in repos_perms[repo][permission_class]['g']">
-                      <td>$user</td>
                       <td>
+                        <span style="font-weight: bold">$user</span>
        	                <label py:for="perm in permissions"
                                   for='{"repo": "$repo", "user": "$user", "perm": "$perm"}'
                                style="border: 1px solid lightgray; border-radius: 5px; padding: 2px; margin-right: 2px">
@@ -52,7 +52,14 @@
                                  name='{"repo": "$repo", "user": "$user", "perm": "$perm"}'
                                  id='{"repo": "$repo", "user": "$user", "perm": "$perm"}'
                                  py:if="user not in repos_perms[repo]['perms'].get(perm, [])" />
-                        </label>
+                          </label>
+                          <br/>
+                          <small style="color: gray">
+                            Members:
+                            <span py:for="member in groups[user]">
+                              $member
+                            </span>
+                          </small>
                       </td>
                     </tr>
                   </tbody>
@@ -67,8 +74,8 @@
                   </thead>
                   <tbody>
                     <tr py:for="user in repos_perms[repo][permission_class]['u']">
-                      <td>$user</td>
                       <td>
+                        <span style="font-weight: bold">$user</span>
                         <label py:for="perm in permissions"
                                   for='{"repo": "$repo", "user": "$user", "perm": "$perm"}'
                                style="border: 1px solid lightgray; border-radius: 5px; padding: 2px; margin-right: 2px">
@@ -82,7 +89,15 @@
                                  name='{"repo": "$repo", "user": "$user", "perm": "$perm"}'
                                  id='{"repo": "$repo", "user": "$user", "perm": "$perm"}'
                                  py:if="user not in repos_perms[repo]['perms'].get(perm, [])" />
-                        </label>
+                          </label>
+                          <br/>
+                          <small style="color: gray">
+                            Member of:
+                            <span py:for="memberof in inverse_groups[user]">
+                              $memberof
+                            </span>
+                          </small>
+ 
                       </td>
                     </tr>
                   </tbody>
