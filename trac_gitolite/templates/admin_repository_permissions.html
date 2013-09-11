@@ -45,14 +45,19 @@
                                  name='{"repo": "$repo", "user": "$user", "perm": "$perm"}'
                                  id='{"repo": "$repo", "user": "$user", "perm": "$perm"}'
                                  py:if="user not in repos_perms[repo]['perms'].get(perm, [])" />
-                          </label>
-                          <br/>
-                          <small style="color: gray">
-                            Members:
-                            <span py:for="member in groups[user]">
-                              $member
+                        </label>
+                        <br/>
+                        <small style="color: gray">
+                          Members:
+                          <span py:for="member in groups[user]">
+                            $member
+                            <span py:for="permission_class in ('W', 'R')">
+                              <span py:if="member in repos_perms[repo][permission_class]['u']">
+                                ($permission_class)
+                              </span>
                             </span>
-                          </small>
+                          </span>
+                        </small>
                       </td>
                     </tr>
                   </tbody>
@@ -82,15 +87,19 @@
                                  name='{"repo": "$repo", "user": "$user", "perm": "$perm"}'
                                  id='{"repo": "$repo", "user": "$user", "perm": "$perm"}'
                                  py:if="user not in repos_perms[repo]['perms'].get(perm, [])" />
-                          </label>
-                          <br/>
-                          <small style="color: gray">
-                            Member of:
-                            <span py:for="memberof in inverse_groups[user]">
-                              $memberof
+                        </label>
+                        <br/>
+                        <small style="color: gray">
+                          Member of:
+                          <span py:for="memberof in inverse_groups[user]">
+                            $memberof
+                            <span py:for="permission_class in ('W', 'R')">
+                              <span py:if="memberof in repos_perms[repo][permission_class]['g']">
+                                ($permission_class)
+                              </span>  
                             </span>
-                          </small>
- 
+                          </span>
+                        </small>
                       </td>
                     </tr>
                   </tbody>
