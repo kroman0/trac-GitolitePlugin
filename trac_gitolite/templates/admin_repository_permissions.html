@@ -18,21 +18,14 @@
       <h3>$repo</h3>
 
       <table class="listing">
-        <thead>
-          <tr>
-            <th colspan="2" width="32%">write access</th>
-            <th colspan="2" width="32%">readonly access</th>
-            <th colspan="2" width="32%">permissions not set</th>
-          </tr>
-        </thead>
         <tbody>
           <tr>
-            <span py:for="permission_class in ('W', 'R','0')">
+            <span py:for="permission_class, permission_label in (('W','with write access'), ('R','with read-only access') ,('0', 'with no permissions set'))">
               <td style="padding: 0px" width="16%">
                 <table class="listing" style="margin: 0px">
                   <thead>
                     <tr>
-                      <th colspan="2">groups</th>
+                      <th colspan="2">groups $permission_label</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -69,7 +62,7 @@
                 <table class="listing" style="margin: 0px">
                   <thead>
                     <tr>
-                      <th colspan="2">users</th>
+                      <th colspan="2">users $permission_label</th>
                     </tr>
                   </thead>
                   <tbody>
