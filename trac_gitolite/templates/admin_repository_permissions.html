@@ -49,6 +49,7 @@
                         <br/>
                         <small style="color: gray">
                           Members:
+                          <span py:if="user == '@all'">everybody</span>
                           <span py:for="member in groups[user]">
                             $member
                             <span py:for="permission_class in ('W', 'R')">

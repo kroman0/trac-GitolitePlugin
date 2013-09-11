@@ -87,7 +87,7 @@ class GitolitePermissionManager(Component):
         for perm in perms.values():
             for userlist in perm.values():
                 users_listed_in_perms.update(userlist)
-        users = sorted(list(set(list(self.get_users()) + list(users_listed_in_perms) + groups.keys())))
+        users = sorted(list(set(list(self.get_users()) + list(users_listed_in_perms) + groups.keys() + ['@all'])))
 
         repos_perms = {}
         for repo in perms:
