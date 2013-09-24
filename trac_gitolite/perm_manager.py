@@ -91,27 +91,28 @@ class GitolitePermissionManager(Component):
 
         repos_perms = {}
         for repo in perms:
-            users_listed_in_perms = set()
-            if repo not in repos_perms:
-                repos_perms[repo] = {}
-                for permission_class in ("W", "R", "0"):
-                    repos_perms[repo][permission_class] = {"g": [], "u": []}
-                repos_perms[repo]["perms"] = perms[repo]
+            if repo != "gitolite-admin":
+                users_listed_in_perms = set()
+                if repo not in repos_perms:
+                    repos_perms[repo] = {}
+                    for permission_class in ("W", "R", "0"):
+                        repos_perms[repo][permission_class] = {"g": [], "u": []}
+                    repos_perms[repo]["perms"] = perms[repo]
 
-            for permission_class in ("W", "R"):
-                for user in perms[repo][permission_class]:
+                for permission_class in ("W", "R"):
+                    for user in perms[repo][permission_class]:
+                        if user not in users_listed_in_perms:
+                            if user.startswith("@"):
+                                repos_perms[repo][permission_class]["g"].append(user)
+                            else:
+                                repos_perms[repo][permission_class]["u"].append(user)
+                            users_listed_in_perms.add(user)
+                for user in users:
                     if user not in users_listed_in_perms:
                         if user.startswith("@"):
-                            repos_perms[repo][permission_class]["g"].append(user)
+                            repos_perms[repo]["0"]["g"].append(user)
                         else:
-                            repos_perms[repo][permission_class]["u"].append(user)
-                        users_listed_in_perms.add(user)
-            for user in users:
-                if user not in users_listed_in_perms:
-                    if user.startswith("@"):
-                        repos_perms[repo]["0"]["g"].append(user)
-                    else:
-                        repos_perms[repo]["0"]["u"].append(user)
+                            repos_perms[repo]["0"]["u"].append(user)
 
         flattened_perms = set()
         for p in perms.values():
