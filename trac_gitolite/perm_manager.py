@@ -51,7 +51,7 @@ class GitolitePermissionManager(Component):
         req.perm.require('VERSIONCONTROL_ADMIN')
 
         if req.method == 'POST':
-            perms, groups, inverse_groups = self.read_config()
+            perms_old, groups, inverse_groups = self.read_config()
             perms = {}
             for setting in req.args:
                 try:
@@ -68,6 +68,7 @@ class GitolitePermissionManager(Component):
                 if user not in perms[repo][perm]:
                     perms[repo][perm].append(user)
 
+            perms[self.gitolite_admin_real_reponame] = perms_old.get(self.gitolite_admin_real_reponame, {})
             gitolite_admin_perms = perms.get(self.gitolite_admin_real_reponame, {})
             if (self.gitolite_admin_system_user not in gitolite_admin_perms.get('R', []) or
                 self.gitolite_admin_system_user not in gitolite_admin_perms.get('W', [])):
