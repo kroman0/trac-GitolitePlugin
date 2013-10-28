@@ -101,7 +101,7 @@ class GitolitePermissionManager(Component):
                     repos_perms[repo]["perms"] = perms[repo]
 
                 for permission_class in ("W", "R"):
-                    for user in perms[repo][permission_class]:
+                    for user in perms[repo].get(permission_class, []):
                         if user not in users_listed_in_perms:
                             if user.startswith("@"):
                                 repos_perms[repo][permission_class]["g"].append(user)
