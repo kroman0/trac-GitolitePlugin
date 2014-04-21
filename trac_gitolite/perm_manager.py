@@ -32,7 +32,12 @@ class GitolitePermissionManager(Component):
             name = child.get_name()
             assert name.endswith(".pub"), "Node %s" % name
             name = name[:-4]
-            yield name
+            if name.endswith('@rsa'):
+                name = name[:-4]
+            if name not in res:
+                res.append(name)
+            #yield name
+        return res
 
     def read_config(self):
         node = utils.get_repo_node(self.env, self.gitolite_admin_reponame,
