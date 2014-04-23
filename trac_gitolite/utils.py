@@ -11,6 +11,8 @@ def get_repo_node(env, repo_name, node):
     from trac.core import TracError
     try:
         repo = env.get_repository(reponame=repo_name)
+        if not repo:
+            retunr None
         return repo.get_node(node)
     except GitError:
         raise TracError("Error reading Git files at %s; check your repository path (for repo %s) and file permissions" % (node, repo_name))
