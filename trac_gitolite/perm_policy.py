@@ -37,7 +37,10 @@ class GitolitePermissionPolicy(Component):
         return utils.read_config(self.env, fp)
 
     def check_repository_permission(self, action, username, repository, resource, perm):
-        repos, groups, inverse_groups = self.read_config()
+        try:
+            repos, groups, inverse_groups = self.read_config()
+        except:
+            return None
 
         ## If the repo is not known in the config, we defer to the supersystem's decisions,
         ## unless our configuration says otherwise.
