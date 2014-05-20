@@ -91,11 +91,12 @@ def to_string(repos, groups):
             fp.write(" %s" % member)
         fp.write("\n")
     fp.write("\n")
-
-    for repo in sorted(repos):
-        if repo != '@all':
-            for perm in repos[repo]:
-                repos[repo][perm] = [p for p in repos[repo][perm] if p not in repos['@all'][perm]]
+    
+    if repos.has_key('@all'):
+        for repo in sorted(repos):
+            if repo != '@all':
+                for perm in repos[repo]:
+                    repos[repo][perm] = [p for p in repos[repo][perm] if p not in repos['@all'][perm]]
 
     for repo in sorted(repos):
         fp.write("repo\t%s\n" % repo)
