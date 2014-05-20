@@ -28,6 +28,7 @@ class GitolitePermissionManager(Component):
         node = utils.get_repo_node(self.env, self.gitolite_admin_reponame, 
                                    "keydir")
         assert node.isdir, "Node %s at /keydir/ is not a directory" % node
+        res = []
         for child in node.get_entries():
             name = child.get_name()
             assert name.endswith(".pub"), "Node %s" % name
