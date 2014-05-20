@@ -2,6 +2,7 @@ import os
 import subprocess
 from StringIO import StringIO
 from tempfile import mkdtemp
+import copy
 
 def get_repo_node(env, repo_name, node):
     try:
@@ -54,6 +55,8 @@ def read_config(env,fp):
             env.log.debug("perms: %r, targets: %r", perms, users)
             perms = perms.strip().upper()
             users = [i.strip() for i in users.split()]
+            if repos.has_key('@all'):
+                info = copy.deepcopy(repos['@all'])
             for perm in perms:
                 if perm in info:
                     env.log.debug("add: granting %r to %r", perm, users)
@@ -88,6 +91,11 @@ def to_string(repos, groups):
             fp.write(" %s" % member)
         fp.write("\n")
     fp.write("\n")
+
+    for repo in sorted(repos):
+        if repo != '@all':
+            for perm in repos[repo]:
+                repos[repo][perm] = [p for p in repos[repo][perm] if p not in repos['@all'][perm]]
 
     for repo in sorted(repos):
         fp.write("repo\t%s\n" % repo)
