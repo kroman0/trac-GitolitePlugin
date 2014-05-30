@@ -55,7 +55,7 @@ def read_config(env,fp):
             env.log.debug("perms: %r, targets: %r", perms, users)
             perms = perms.strip().upper()
             users = [i.strip() for i in users.split()]
-            if repos.has_key('@all'):
+            if not info and repos.has_key('@all'):
                 info = copy.deepcopy(repos['@all'])
             for perm in perms:
                 if perm in info:
